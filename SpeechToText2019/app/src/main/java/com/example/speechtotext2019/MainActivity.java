@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.net.Uri;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.util.Log;
@@ -29,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
     private ImageButton btnSpeak;
     private final int REQ_CODE_SPEECH_INPUT = 100;
     static Timer timer;
-    private static int sec=5,period=1000;
+    private static int sec=3,period=1000;
     Random rnd=new Random();
     public static Boolean pause=true;
     //固定的文字資料初始設定
@@ -65,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
                             else{ QuestionText.setText(String.valueOf(vector.elementAt(index)));
                                 promptSpeechInput();
                                 pause=true;
-                                sec=5;
+                                sec=3;
                             }
 
                         }
@@ -83,7 +84,8 @@ public class MainActivity extends AppCompatActivity {
                 pause=false;
                 getQuest();
                 QuestionText.setText("題目即將出現");
-
+                //btnSpeak.setClickable(false);
+                btnSpeak.setVisibility(View.GONE);
                 Log.d("Quest=",String.valueOf(Quest));
                 Enumeration vEnum = vector.elements();
                 while(vEnum.hasMoreElements())
@@ -103,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
         vector.clear();
         final String[]Q1=res.getStringArray(R.array.Q1);
         final String[]Q2=res.getStringArray(R.array.Q2);
-        Quest=Q1[rnd.nextInt(Q1.length-1)];
+        //Quest=Q1[rnd.nextInt(Q1.length-1)];
         Quest=Q2[rnd.nextInt(Q2.length-1)];
         String[]Quests=Quest.split(",");
         for(int i=0;i<Quests.length;i++)
@@ -148,11 +150,22 @@ public class MainActivity extends AppCompatActivity {
                     if(s1.equals(s2))
                     {Toast.makeText(this,"pass",Toast.LENGTH_SHORT).show();/*pause=true;period=1000*/;
                     }
+                    else
                     {Toast.makeText(this,"fail",Toast.LENGTH_SHORT).show();}
                     index++;
                     if (index<=vector.size()-1)
                     {pause=false;QuestionText.setText("下一行即將出現");}
-                    else{index=0;pause=true;Toast.makeText(this,"恭喜答完題了,有羞恥到嗎?",Toast.LENGTH_SHORT).show();}
+                    else{index=0;pause=true;Toast.makeText(this,"恭喜答完題了,有羞恥到嗎?",Toast.LENGTH_SHORT).show();
+
+
+                        btnSpeak.setVisibility(View.VISIBLE);
+                    Intent i=new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.youtube.com/embed/OpUJqAWgtCw"));
+                        i.setPackage("com.google.android.youtube");
+                        i.putExtra("force_fullscreen",true);
+                        startActivity(i);
+
+
+                    }
 
                 }
                 break;
